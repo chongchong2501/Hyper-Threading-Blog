@@ -6,7 +6,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true, // 启用音乐播放器功能
 
 	// 使用方式：'meting' 或 'local'
-	mode: "meting", // "meting" 使用 Meting API，"local" 使用本地音乐列表
+	mode: "local", // "meting" 使用 Meting API，"local" 使用本地音乐列表
 
 	// Meting API 配置
 	meting: {
@@ -21,7 +21,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 		type: "playlist",
 
 		// 歌单/专辑/单曲 ID 或搜索关键词
-		id: "10046455237", // 网易云音乐歌单ID示例
+		id: "2578783407", // 网易云音乐歌单ID示例
 
 		// 认证 token（可选）
 		auth: "",
@@ -43,14 +43,45 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	local: {
 		playlist: [
 			{
-				name: "使一颗心免于哀伤",
-				artist: "知更鸟 / HOYO-MiX / Chevy",
-				url: "/assets/music/使一颗心免于哀伤-哼唱.wav",
-				cover: "/assets/music/cover/109951169585655912.jpg",
-				lrc: "", // 歌词内容，支持 LRC 格式
+				name: "7 years",
+				artist: "",
+				url: "/assets/music/mp3/7 years.mp3",
+				cover: "/assets/music/cover/7 years.jpeg",
+				lrc: "",
+			},
+			{
+				name: "Five Hundred Miles",
+				artist: "Justin Timberlake / Carey Mulligan / Stark Sands",
+				url: "/assets/music/mp3/Justin Timberlake&Carey Mulligan&Stark Sands-Five Hundred Miles.mp3",
+				cover: "/assets/music/cover/Five Hundred Miles.jpeg",
+				lrc: "/assets/music/word/Justin Timberlake&Carey Mulligan&Stark Sands-Five Hundred Miles.lrc",
+			},
+			{
+				name: "出现又离开",
+				artist: "",
+				url: "/assets/music/mp3/出现又离开.mp3",
+				cover: "/assets/music/cover/出现又离开.jpeg",
+				lrc: "",
+			},
+			{
+				name: "日落大道",
+				artist: "",
+				url: "/assets/music/mp3/日落大道.mp3",
+				cover: "/assets/music/cover/日落大道.jpeg",
+				lrc: "",
+			},
+			{
+				name: "曾经是情侣",
+				artist: "",
+				url: "/assets/music/mp3/曾经是情侣.mp3",
+				cover: "/assets/music/cover/曾经是情侣.jpeg",
+				lrc: "",
 			},
 		],
 	},
+
+
+
 
 	// APlayer 配置选项
 	player: {
@@ -70,7 +101,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 		preload: "auto",
 
 		// 默认音量 (0-1)
-		volume: 0.7,
+		volume: 0.2,
 
 		// 是否互斥播放（同时只能播放一个播放器）
 		mutex: true,
