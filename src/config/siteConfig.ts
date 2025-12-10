@@ -144,12 +144,12 @@ export const siteConfig: SiteConfig = {
 					mobile: true, // 移动端显示横幅图片来源文本
 				},
 				text: {
-					desktop: "Pixiv - 晚晚喵", // 桌面端要显示的来源文本
-					mobile: "Pixiv - KiraraShss", // 移动端要显示的来源文本
+					desktop: "【哲风壁纸】", // 桌面端要显示的来源文本
+					mobile: "【哲风壁纸】", // 移动端要显示的来源文本
 				},
 				url: {
-					desktop: "https://www.pixiv.net/artworks/135490046", // 桌面端原始艺术品或艺术家页面的 URL 链接
-					mobile: "https://www.pixiv.net/users/42715864", // 移动端原始艺术品或艺术家页面的 URL 链接
+					desktop: "https://haowallpaper.com/homeView", // 桌面端原始艺术品或艺术家页面的 URL 链接
+					mobile: "https://haowallpaper.com/homeView", // 移动端原始艺术品或艺术家页面的 URL 链接
 				},
 			},
 			navbar: {
