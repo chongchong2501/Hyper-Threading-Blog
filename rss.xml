@@ -141,584 +141,363 @@ URL：&lt;code&gt;/posts/how-to-use-firefly-blog-theme&lt;/code&gt;&lt;/p&gt;
 &lt;li&gt;如果多个文章使用相同的 slug，后面的文章会覆盖前面的&lt;/li&gt;
 &lt;li&gt;Slug 会自动转换为小写&lt;/li&gt;
 &lt;/ul&gt;
-</content:encoded></item><item><title>Firefly 布局系统详解</title><link>https://hyperthreading.cn/posts/firefly-layout-system/</link><guid isPermaLink="true">https://hyperthreading.cn/posts/firefly-layout-system/</guid><description>深入了解 Firefly 的布局系统，包括侧边栏布局（左侧/双侧）和文章列表布局（列表/网格），以及为什么双侧边栏与网格模式会冲突的技术原理。</description><pubDate>Fri, 02 Jan 1970 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;📖 概述&lt;/h2&gt;
-&lt;p&gt;Firefly 提供了灵活的布局系统，允许您根据内容需求和个人喜好自定义博客的视觉呈现方式。布局系统主要包括&lt;strong&gt;侧边栏布局&lt;/strong&gt;和&lt;strong&gt;文章列表布局&lt;/strong&gt;两个维度，它们相互配合，共同决定了页面的整体结构。&lt;/p&gt;
-&lt;p&gt;本文将详细介绍 Firefly 的各种布局模式、它们的特点、使用场景，以及为什么某些布局之间会存在冲突。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;一、侧边栏布局系统&lt;/h2&gt;
-&lt;p&gt;侧边栏是博客页面的重要组成部分，用于展示导航、分类、标签、统计信息等辅助内容。Firefly 支持两种侧边栏布局模式。&lt;/p&gt;
-&lt;h3&gt;1.1 左侧边栏模式 (position: &quot;left&quot;)&lt;/h3&gt;
-&lt;h4&gt;特点&lt;/h4&gt;
+</content:encoded></item><item><title>卷积神经网络（CNN）</title><link>https://hyperthreading.cn/posts/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Ccnn/</link><guid isPermaLink="true">https://hyperthreading.cn/posts/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9Ccnn/</guid><pubDate>Mon, 01 Dec 2025 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;🌟 卷积神经网络（CNN）终极详解&lt;/p&gt;
+&lt;p&gt;一、CNN 的生物学灵感与哲学思想&lt;/p&gt;
+&lt;p&gt;1.1 生物视觉皮层启发&lt;/p&gt;
+&lt;p&gt;CNN 的设计灵感来源于 1960 年代神经科学家 Hubel 和 Wiesel 对猫视觉皮层的研究：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;侧边栏固定在页面左侧&lt;/li&gt;
-&lt;li&gt;主内容区域位于右侧&lt;/li&gt;
-&lt;li&gt;符合从左到右的阅读习惯&lt;/li&gt;
-&lt;li&gt;适合展示导航和分类等重要信息&lt;/li&gt;
+&lt;li&gt;简单细胞（Simple Cells）：只对特定位置、方向的边缘/条状刺激有反应 → 对应 CNN 的“卷积核”&lt;/li&gt;
+&lt;li&gt;复杂细胞（Complex Cells）：对某方向边缘有反应，但位置不敏感 → 对应“池化层”的平移不变性&lt;/li&gt;
+&lt;li&gt;层级结构：低级特征（边缘）→ 中级特征（形状）→ 高级特征（物体）→ 对应 CNN 的“层叠结构”&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4&gt;布局结构&lt;/h4&gt;
-&lt;p&gt;&lt;img src=&quot;https://hyperthreading.cn/_astro/left.CIe5Lccn_jdQlM.webp&quot; alt=&quot;左侧边栏布局&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 此处可以插入左侧边栏布局截图 --&amp;gt;&lt;/p&gt;
-&lt;h4&gt;适用场景&lt;/h4&gt;
+&lt;p&gt;🧬 CNN 是对生物视觉系统的“工程化模拟”，不是完全复制，而是提取其核心思想：局部感受、层次抽象、权值共享 。&lt;/p&gt;
+&lt;p&gt;1.2 哲学思想：让机器“学会看”&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;传统博客风格&lt;/li&gt;
-&lt;li&gt;强调导航和分类的博客&lt;/li&gt;
-&lt;li&gt;需要突出用户资料的个人博客&lt;/li&gt;
-&lt;li&gt;内容为主，辅助信息次之的场景&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;配置示例&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// src/config/sidebarConfig.ts
-export const sidebarLayoutConfig: SidebarLayoutConfig = {
-  enable: true,
-  position: &quot;left&quot;, // 左侧边栏
-  leftComponents: [
-    { type: &quot;profile&quot;, order: 1 },
-    { type: &quot;announcement&quot;, order: 2 },
-    { type: &quot;categories&quot;, order: 3 },
-    { type: &quot;tags&quot;, order: 5 },
-  ],
-  rightComponents: [], // 右侧组件为空
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;h3&gt;1.2 双侧边栏模式 (position: &quot;both&quot;)&lt;/h3&gt;
-&lt;h4&gt;特点&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;左右两侧同时存在侧边栏&lt;/li&gt;
-&lt;li&gt;主内容区域位于中间&lt;/li&gt;
-&lt;li&gt;最大化利用屏幕空间&lt;/li&gt;
-&lt;li&gt;可以展示更多辅助信息&lt;/li&gt;
-&lt;li&gt;适合宽屏显示器&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;布局结构&lt;/h4&gt;
-&lt;p&gt;&lt;img src=&quot;https://hyperthreading.cn/_astro/both.irYNrlI2_8hGM9.webp&quot; alt=&quot;双侧边栏布局&quot; /&gt;&lt;/p&gt;
-&lt;h4&gt;适用场景&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;宽屏桌面端浏览&lt;/li&gt;
-&lt;li&gt;信息密集型博客&lt;/li&gt;
-&lt;li&gt;需要展示大量辅助内容&lt;/li&gt;
-&lt;li&gt;专业性强的技术博客&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;响应式行为&lt;/h4&gt;
-&lt;p&gt;双侧边栏模式具有智能的响应式设计：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;桌面端（≥1024px）&lt;/strong&gt;：显示左右双侧边栏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;平板端（768px-1023px）&lt;/strong&gt;：只显示左侧边栏，右侧边栏自动隐藏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;移动端（&amp;lt;768px）&lt;/strong&gt;：只显示左侧边栏&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;配置示例&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// src/config/sidebarConfig.ts
-export const sidebarLayoutConfig: SidebarLayoutConfig = {
-  enable: true,
-  position: &quot;both&quot;, // 双侧边栏
-  leftComponents: [
-    // 左侧边栏组件
-    { type: &quot;profile&quot;, order: 1 },
-    { type: &quot;announcement&quot;, order: 2 },
-    { type: &quot;categories&quot;, order: 3 },
-    { type: &quot;tags&quot;, order: 5 },
-  ],
-  rightComponents: [
-    // 右侧边栏组件
-    { type: &quot;stats&quot;, order: 1 },
-    { type: &quot;sidebarToc&quot;, order: 2, showOnPostPage: true },
-    { type: &quot;advertisement&quot;, order: 10 },
-  ],
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;⚠️ 重要限制&lt;/h4&gt;
-&lt;p&gt;启用双侧边栏后，文章列表的&lt;strong&gt;网格模式&lt;/strong&gt;将无法使用，只能使用&lt;strong&gt;列表模式&lt;/strong&gt;。原因详见下文&quot;布局冲突分析&quot;章节。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;二、文章列表布局系统&lt;/h2&gt;
-&lt;p&gt;文章列表是博客首页和归档页的核心内容，Firefly 提供两种展示方式。&lt;/p&gt;
-&lt;h3&gt;2.1 列表模式 (defaultMode: &quot;list&quot;)&lt;/h3&gt;
-&lt;h4&gt;特点&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;单列纵向排列&lt;/li&gt;
-&lt;li&gt;显示文章封面图&lt;/li&gt;
-&lt;li&gt;展示更多文章摘要&lt;/li&gt;
-&lt;li&gt;适合深度阅读&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;布局结构&lt;/h4&gt;
-&lt;p&gt;&lt;img src=&quot;https://hyperthreading.cn/_astro/left.CIe5Lccn_jdQlM.webp&quot; alt=&quot;列表模式布局&quot; /&gt;&lt;/p&gt;
-&lt;h4&gt;优点&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;✅ 视觉冲击力强，封面图吸引眼球&lt;/li&gt;
-&lt;li&gt;✅ 可以展示更多文章信息（摘要、标签等）&lt;/li&gt;
-&lt;li&gt;✅ 适合图片内容丰富的博客&lt;/li&gt;
-&lt;li&gt;✅ 移动端友好，单列更易阅读&lt;/li&gt;
-&lt;li&gt;✅ 兼容所有侧边栏配置（单侧、双侧）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;适用场景&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;摄影博客、设计博客&lt;/li&gt;
-&lt;li&gt;强调视觉效果的博客&lt;/li&gt;
-&lt;li&gt;文章数量较少但质量高的博客&lt;/li&gt;
-&lt;li&gt;移动端访问为主的博客&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;配置示例&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// src/config/siteConfig.ts
-export const siteConfig: SiteConfig = {
-  postListLayout: {
-    defaultMode: &quot;list&quot;, // 列表模式
-    allowSwitch: true,   // 允许用户切换
-  },
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;hr /&gt;
-&lt;h3&gt;2.2 网格模式 (defaultMode: &quot;grid&quot;)&lt;/h3&gt;
-&lt;h4&gt;特点&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;双列横向排列&lt;/li&gt;
-&lt;li&gt;紧凑布局，信息密度高&lt;/li&gt;
-&lt;li&gt;适合快速浏览&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;布局结构&lt;/h4&gt;
-&lt;p&gt;&lt;img src=&quot;https://hyperthreading.cn/_astro/grid.9G1bc7kt_yGMvr.webp&quot; alt=&quot;网格模式布局&quot; /&gt;&lt;/p&gt;
-&lt;h4&gt;优点&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;✅ 单屏显示更多文章&lt;/li&gt;
-&lt;li&gt;✅ 适合快速浏览和查找&lt;/li&gt;
-&lt;li&gt;✅ 节省垂直滚动空间&lt;/li&gt;
-&lt;li&gt;✅ 现代化的瀑布流风格&lt;/li&gt;
-&lt;li&gt;✅ 适合文章数量多的博客&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;限制&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;⚠️ &lt;strong&gt;不支持双侧边栏模式&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;⚠️ 屏幕宽度 &amp;lt; 1200px 时自动切换为列表模式&lt;/li&gt;
-&lt;li&gt;⚠️ 封面图目前显示不全，视觉吸引力较弱，待优化&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;适用场景&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;技术博客、文字为主的博客&lt;/li&gt;
-&lt;li&gt;文章数量多，需要快速检索&lt;/li&gt;
-&lt;li&gt;桌面端访问为主的博客&lt;/li&gt;
-&lt;li&gt;强调信息密度的场景&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;配置示例&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// src/config/siteConfig.ts
-export const siteConfig: SiteConfig = {
-  postListLayout: {
-    defaultMode: &quot;grid&quot;, // 网格模式
-    allowSwitch: true,   // 允许用户切换
-  },
-};
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;响应式行为&lt;/h4&gt;
-&lt;p&gt;网格模式具有智能的响应式设计：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;桌面端（≥1200px）&lt;/strong&gt;：显示双列网格&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;平板端和移动端（&amp;lt;1200px）&lt;/strong&gt;：自动切换为单列列表模式&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;布局切换按钮&lt;/strong&gt;：仅在桌面端显示&lt;/li&gt;
+&lt;li&gt;传统方法：人工设计特征（如SIFT、HOG）→ 费时费力，泛化差&lt;/li&gt;
+&lt;li&gt;CNN 方法：端到端学习 ，从原始像素自动学习最优特征表示&lt;/li&gt;
+&lt;li&gt;核心哲学：Representation Learning（表示学习）&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr /&gt;
-&lt;h2&gt;三、布局冲突分析 ⚠️&lt;/h2&gt;
-&lt;h3&gt;3.1 为什么双侧边栏与网格模式冲突？&lt;/h3&gt;
-&lt;p&gt;这是 Firefly 设计中一个重要的技术限制，理解其原因有助于您做出正确的布局选择。&lt;/p&gt;
-&lt;h4&gt;空间占用分析&lt;/h4&gt;
-&lt;p&gt;让我们通过实际的宽度计算来理解这个问题：&lt;/p&gt;
-&lt;h5&gt;典型桌面屏幕宽度&lt;/h5&gt;
-&lt;p&gt;假设常见的桌面屏幕宽度为 &lt;strong&gt;1920px&lt;/strong&gt;（Full HD）&lt;/p&gt;
-&lt;h5&gt;单侧边栏 + 网格模式 ✅&lt;/h5&gt;
-&lt;pre&gt;&lt;code&gt;总宽度：1920px
-
-├─ 左侧边栏：    280px  (固定宽度)
-├─ 左侧间距：     40px  (margin)
-├─ 主内容区域： 1560px  (剩余空间)
-│  ├─ 文章卡片1： 750px
-│  ├─ 卡片间距：   60px
-│  └─ 文章卡片2： 750px
-└─ 右侧间距：     40px
-
-主内容区域 = 1920 - 280 - 40 - 40 = 1560px
-每列宽度   = (1560 - 60) / 2 = 750px  ✅ 足够显示
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;结论&lt;/strong&gt;：单侧边栏时，主内容区域有 &lt;strong&gt;1560px&lt;/strong&gt;，足够容纳双列网格（每列 750px），布局正常。&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 此处可以插入单侧边栏+网格模式截图 --&amp;gt;&lt;/p&gt;
-&lt;h5&gt;双侧边栏 + 网格模式 ❌&lt;/h5&gt;
-&lt;pre&gt;&lt;code&gt;总宽度：1920px
-
-├─ 左侧边栏：    280px  (固定宽度)
-├─ 左侧间距：     40px  (margin)
-├─ 主内容区域： 1240px  (剩余空间)
-│  ├─ 文章卡片1： 590px
-│  ├─ 卡片间距：   60px
-│  └─ 文章卡片2： 590px
-├─ 右侧间距：     40px
-└─ 右侧边栏：    280px  (固定宽度)
-
-主内容区域 = 1920 - 280 - 40 - 40 - 280 - 40 = 1240px
-每列宽度   = (1240 - 60) / 2 = 590px  ❌ 空间不足
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;问题&lt;/strong&gt;：双侧边栏时，主内容区域被压缩到 &lt;strong&gt;1240px&lt;/strong&gt;，每列只有 &lt;strong&gt;590px&lt;/strong&gt;，文章卡片显得过于拥挤。&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 此处可以插入双侧边栏+网格模式拥挤效果截图 --&amp;gt;&lt;/p&gt;
-&lt;h5&gt;更小屏幕的情况&lt;/h5&gt;
-&lt;p&gt;在 &lt;strong&gt;1366px&lt;/strong&gt; 宽度的笔记本电脑上：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;双侧边栏 + 网格模式
-
-总宽度：1366px
-
-主内容区域 = 1366 - 280 - 40 - 40 - 280 - 40 = 686px
-每列宽度   = (686 - 60) / 2 = 313px  ❌ 严重不足
-
-每列只有 313px，文章标题都无法完整显示！
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;视觉体验问题&lt;/h4&gt;
-&lt;p&gt;即使在宽屏显示器上，双侧边栏 + 网格模式也会带来以下问题：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;文章卡片过窄&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;二、卷积操作的数学本质（超详细）&lt;/p&gt;
+&lt;p&gt;2.1 离散卷积公式（2D）&lt;/p&gt;
+&lt;p&gt;对输入图像 $$ I \in \mathbb{R}^{H \times W} $$ 和卷积核 $$K \in \mathbb{R}^{k \times k} $$ ，输出特征图 $$ O $$ 在位置 $$ (i,j) $$ 的值为：&lt;/p&gt;
+&lt;p&gt;$$O(i,j) = (I * K)(i,j) = \sum_{m=0}^{k-1} \sum_{n=0}^{k-1} I(i+m, j+n) \cdot K(m,n)$$&lt;/p&gt;
+&lt;p&gt;注意：实际深度学习框架中多为“互相关（cross-correlation）”，即不翻转核，但习惯仍称“卷积”。&lt;/p&gt;
+&lt;p&gt;2.2 多通道输入/输出&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;标题需要多行折叠&lt;/li&gt;
-&lt;li&gt;摘要显示不完整&lt;/li&gt;
-&lt;li&gt;标签和元信息拥挤&lt;/li&gt;
+&lt;li&gt;输入通道数：$$C_{in} $$（如RGB=3）&lt;/li&gt;
+&lt;li&gt;输出通道数：$$ C_{out}$$（即卷积核个数）&lt;/li&gt;
+&lt;li&gt;每个卷积核尺寸：$$ k \times k \times C_{in} $$&lt;/li&gt;
+&lt;li&gt;总参数量：$$C_{out} \times (k \times k \times C_{in} + 1)$$（+1 是偏置项）&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;✅ 举例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入：224×224×3&lt;/li&gt;
+&lt;li&gt;卷积层：64个 3×3 卷积核&lt;/li&gt;
+&lt;li&gt;参数量 = $$ 64 \times (3 \times 3 \times 3 + 1) = 64 \times 28 = 1,792 $$&lt;/li&gt;
+&lt;li&gt;对比全连接：$$224 \times 224 \times 3 \times 1000 = 150M$$→ CNN 参数效率极高！&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2.3 输出尺寸计算公式&lt;/p&gt;
+&lt;p&gt;给定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;输入尺寸：$$ W_{in} \times H_{in} $$&lt;/li&gt;
+&lt;li&gt;卷积核尺寸：$$ K $$&lt;/li&gt;
+&lt;li&gt;步长：$$ S $$&lt;/li&gt;
+&lt;li&gt;填充：$$ P $$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;输出尺寸：&lt;/p&gt;
+&lt;p&gt;$$W_{out} = \left\lfloor \frac{W_{in} + 2P - K}{S} \right\rfloor + 1$$&lt;/p&gt;
+&lt;p&gt;📌 常用设置：K=3, S=1, P=1 → 尺寸不变；K=3, S=2, P=1 → 尺寸减半&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;三、CNN 各层组件深度剖析&lt;/p&gt;
+&lt;p&gt;3.1 卷积层（Conv Layer）——不止是“滑动窗口”&lt;/p&gt;
+&lt;p&gt;类型扩展：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;标准卷积（Standard Conv）：上述基本形式&lt;/li&gt;
+&lt;li&gt;空洞卷积（Dilated Conv）：在核元素间插入“空洞”，扩大感受野而不增加参数。用于语义分割（如DeepLab）&lt;/li&gt;
+&lt;li&gt;转置卷积（Transposed Conv）：又称“反卷积”，用于上采样（如图像生成、分割）&lt;/li&gt;
+&lt;li&gt;深度可分离卷积（Depthwise Separable Conv）：
+&lt;ul&gt;
+&lt;li&gt;Step1: Depthwise Conv —— 每个输入通道单独卷积&lt;/li&gt;
+&lt;li&gt;Step2: Pointwise Conv —— 1×1卷积融合通道&lt;/li&gt;
+&lt;li&gt;参数量大幅减少 → 用于MobileNet等轻量模型&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;阅读体验差&lt;/strong&gt;&lt;/p&gt;
+&lt;/ul&gt;
+&lt;p&gt;感受野（Receptive Field）&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;每行文字过短，阅读不流畅&lt;/li&gt;
-&lt;li&gt;视线需要频繁跳转&lt;/li&gt;
-&lt;li&gt;信息扫描效率低&lt;/li&gt;
+&lt;li&gt;定义：输出特征图上某一点，对应输入图像的区域大小&lt;/li&gt;
+&lt;li&gt;随着网络加深，感受野增大 → 高层神经元“看到”更大范围&lt;/li&gt;
+&lt;li&gt;计算公式（简化）：若每层 stride=1，则第L层感受野 ≈ $$ 1 + (K-1) \times L $$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;🎯 目标检测中，大感受野对检测大物体至关重要。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;3.2 激活函数 —— 为什么ReLU是王者？&lt;/p&gt;
+&lt;p&gt;常见激活函数对比：&lt;/p&gt;
+&lt;p&gt;函数
+公式
+优点
+缺点
+Sigmoid
+$$ \frac{1}{1+e^{-x}} $$
+输出0~1，可解释概率
+梯度消失、非零中心
+Tanh
+$$ \frac{e^x - e^{-x}}{e^x + e^{-x}} $$
+零中心
+梯度消失
+ReLU
+$$ \max(0,x) $$
+计算快、缓解梯度消失
+“死神经元”问题
+Leaky ReLU
+$$ \max(0.01x, x) $$
+解决死神经元
+需调参
+ELU
+$$ x&amp;gt;0: x; x≤0: \alpha(e^x-1) $$
+负值有梯度，均值≈0
+计算稍慢&lt;/p&gt;
+&lt;p&gt;✅ 实践建议：默认用ReLU，如遇神经元“死亡”，换Leaky ReLU或ELU。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;3.3 池化层 —— 为什么Max Pooling最常用？&lt;/p&gt;
+&lt;p&gt;Max Pooling vs Average Pooling&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Max Pooling：保留最显著特征，增强纹理/边缘响应 → 更适合分类&lt;/li&gt;
+&lt;li&gt;Average Pooling：平滑特征，保留背景信息 → 有时用于最后全局池化&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;全局平均池化（Global Average Pooling, GAP）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对每个特征图求平均，得到一个值 → 替代全连接层&lt;/li&gt;
+&lt;li&gt;优点：无参数、防过拟合、可解释性强（CAM可视化）&lt;/li&gt;
+&lt;li&gt;应用：GoogLeNet、ResNet等现代架构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;3.4 批归一化（Batch Normalization, BN）——训练加速神器&lt;/p&gt;
+&lt;p&gt;为什么需要BN？&lt;/p&gt;
+&lt;p&gt;深度网络中，层间输入分布会不断变化（Internal Covariate Shift）→ 训练不稳定、需小学习率。&lt;/p&gt;
+&lt;p&gt;BN公式（训练时）：&lt;/p&gt;
+&lt;p&gt;对一个batch的某通道数据 $$x$$：&lt;/p&gt;
+&lt;p&gt;$$\hat{x} = \frac{x - \mu_B}{\sqrt{\sigma_B^2 + \epsilon}}, \quad y = \gamma \hat{x} + \beta$$&lt;/p&gt;
+&lt;p&gt;其中 $$ \mu_B, \sigma_B^2 $$ 是batch均值和方差，$$\gamma, \beta$$ 是可学习参数。&lt;/p&gt;
+&lt;p&gt;作用：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;加速收敛（可用大学习率）&lt;/li&gt;
+&lt;li&gt;一定程度替代Dropout（正则化效果）&lt;/li&gt;
+&lt;li&gt;提高模型鲁棒性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;📌 实践：通常在卷积后、激活前 插入BN层（Conv → BN → ReLU）&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;3.5 全连接层与Softmax —— 最后的决策者&lt;/p&gt;
+&lt;p&gt;Softmax函数：&lt;/p&gt;
+&lt;p&gt;将网络输出 $$ z = [z_1, z_2, ..., z_K] $$ 转为概率分布：&lt;/p&gt;
+&lt;p&gt;$$p_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}}$$&lt;/p&gt;
+&lt;p&gt;损失函数：交叉熵（Cross-Entropy）&lt;/p&gt;
+&lt;p&gt;$$\mathcal{L} = -\sum_{i=1}^K y_i \log(p_i)$$&lt;/p&gt;
+&lt;p&gt;其中 $$ y_i $$ 是真实标签的one-hot编码。&lt;/p&gt;
+&lt;p&gt;✅ 交叉熵 + Softmax 是分类任务的黄金搭档。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;四、CNN 训练全流程详解&lt;/p&gt;
+&lt;p&gt;4.1 数据预处理&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;归一化：像素值 /255.0 → [0,1] 或 标准化 $$ (x - mean)/std $$&lt;/li&gt;
+&lt;li&gt;数据增强（Data Augmentation）：
+&lt;ul&gt;
+&lt;li&gt;随机裁剪、旋转、翻转、色彩抖动、CutMix、MixUp&lt;/li&gt;
+&lt;li&gt;本质：增加数据多样性，提升泛化，防过拟合&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;视觉不平衡&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;三栏布局已经占据大量横向空间&lt;/li&gt;
-&lt;li&gt;再将中间栏分成两列，过于碎片化&lt;/li&gt;
-&lt;li&gt;破坏了&quot;中心内容突出&quot;的设计原则&lt;/li&gt;
 &lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4&gt;布局对比图示&lt;/h4&gt;
-&lt;p&gt;&lt;strong&gt;❌空间不足 双侧边栏 + 网格模式（拥挤）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg width=&quot;800&quot; height=&quot;200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&amp;gt;
-&amp;lt;!-- 背景 --&amp;gt;
-&amp;lt;rect width=&quot;800&quot; height=&quot;200&quot; fill=&quot;#f8f9fa&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 左侧边栏 --&amp;gt;
-&amp;lt;rect x=&quot;20&quot; y=&quot;30&quot; width=&quot;140&quot; height=&quot;140&quot; fill=&quot;#e3f2fd&quot; stroke=&quot;#2196f3&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#1976d2&quot;&amp;gt;左侧边栏&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;280px&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 文章1 --&amp;gt;
-&amp;lt;rect x=&quot;180&quot; y=&quot;30&quot; width=&quot;120&quot; height=&quot;140&quot; fill=&quot;#fff3e0&quot; stroke=&quot;#ff9800&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;240&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#f57c00&quot;&amp;gt;文章1&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;240&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;590px&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;240&quot; y=&quot;130&quot; text-anchor=&quot;middle&quot; font-size=&quot;11&quot; fill=&quot;#d84315&quot;&amp;gt;过窄！&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 文章2 --&amp;gt;
-&amp;lt;rect x=&quot;320&quot; y=&quot;30&quot; width=&quot;120&quot; height=&quot;140&quot; fill=&quot;#fff3e0&quot; stroke=&quot;#ff9800&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;380&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#f57c00&quot;&amp;gt;文章2&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;380&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;590px&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;380&quot; y=&quot;130&quot; text-anchor=&quot;middle&quot; font-size=&quot;11&quot; fill=&quot;#d84315&quot;&amp;gt;过窄！&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 右侧边栏 --&amp;gt;
-&amp;lt;rect x=&quot;460&quot; y=&quot;30&quot; width=&quot;140&quot; height=&quot;140&quot; fill=&quot;#e3f2fd&quot; stroke=&quot;#2196f3&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;530&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#1976d2&quot;&amp;gt;右侧边栏&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;530&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;280px&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 箭头指示 --&amp;gt;
-&amp;lt;path d=&quot;M 240 180 L 240 195&quot; stroke=&quot;#d32f2f&quot; stroke-width=&quot;2&quot; marker-end=&quot;url(#arrowred)&quot;/&amp;gt;
-&amp;lt;path d=&quot;M 380 180 L 380 195&quot; stroke=&quot;#d32f2f&quot; stroke-width=&quot;2&quot; marker-end=&quot;url(#arrowred)&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;defs&amp;gt;
-&amp;lt;marker id=&quot;arrowred&quot; markerWidth=&quot;10&quot; markerHeight=&quot;10&quot; refX=&quot;5&quot; refY=&quot;5&quot; orient=&quot;auto&quot;&amp;gt;
-&amp;lt;path d=&quot;M 0 0 L 10 5 L 0 10 Z&quot; fill=&quot;#d32f2f&quot;/&amp;gt;
-&amp;lt;/marker&amp;gt;
-&amp;lt;/defs&amp;gt;
-&amp;lt;/svg&amp;gt;&lt;/p&gt;
+&lt;p&gt;4.2 优化器选择&lt;/p&gt;
+&lt;p&gt;优化器
+特点
+适用场景
+SGD
+基础，需手动调学习率
+理论研究、简单任务
+SGD + Momentum
+加速收敛，减少震荡
+通用
+Adam
+自适应学习率，收敛快
+默认首选，尤其小数据
+RMSProp
+适合非平稳目标
+RNN/CNN均可&lt;/p&gt;
+&lt;p&gt;🚀 实践建议：新手用 Adam (lr=0.001) ，高手可尝试 SGD + Momentum + 学习率衰减&lt;/p&gt;
+&lt;p&gt;4.3 正则化技术&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;L2权重衰减（Weight Decay）：损失函数加 $$ \lambda |\theta|^2 $$&lt;/li&gt;
+&lt;li&gt;Dropout：训练时随机丢弃神经元（通常FC层用，rate=0.5）&lt;/li&gt;
+&lt;li&gt;Early Stopping：验证集loss不再下降时停止&lt;/li&gt;
+&lt;li&gt;Label Smoothing：软化one-hot标签，防过自信&lt;/li&gt;
+&lt;/ul&gt;
 &lt;hr /&gt;
-&lt;p&gt;&lt;strong&gt;✅布局合理：双侧边栏 + 列表模式（舒适）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg width=&quot;800&quot; height=&quot;200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&amp;gt;
-&amp;lt;!-- 背景 --&amp;gt;
-&amp;lt;rect width=&quot;800&quot; height=&quot;200&quot; fill=&quot;#f8f9fa&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 左侧边栏 --&amp;gt;
-&amp;lt;rect x=&quot;20&quot; y=&quot;30&quot; width=&quot;140&quot; height=&quot;140&quot; fill=&quot;#e3f2fd&quot; stroke=&quot;#2196f3&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#1976d2&quot;&amp;gt;左侧边栏&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;280px&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 文章列表区域 --&amp;gt;
-&amp;lt;rect x=&quot;180&quot; y=&quot;30&quot; width=&quot;320&quot; height=&quot;140&quot; fill=&quot;#e8f5e9&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;340&quot; y=&quot;85&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#2e7d32&quot;&amp;gt;文章列表&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;340&quot; y=&quot;105&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;1240px&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;340&quot; y=&quot;125&quot; text-anchor=&quot;middle&quot; font-size=&quot;11&quot; fill=&quot;#388e3c&quot;&amp;gt;单列，空间充足&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 右侧边栏 --&amp;gt;
-&amp;lt;rect x=&quot;520&quot; y=&quot;30&quot; width=&quot;140&quot; height=&quot;140&quot; fill=&quot;#e3f2fd&quot; stroke=&quot;#2196f3&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;590&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#1976d2&quot;&amp;gt;右侧边栏&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;590&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;280px&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 箭头指示 --&amp;gt;
-&amp;lt;path d=&quot;M 340 180 L 340 195&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; marker-end=&quot;url(#arrowgreen)&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;defs&amp;gt;
-&amp;lt;marker id=&quot;arrowgreen&quot; markerWidth=&quot;10&quot; markerHeight=&quot;10&quot; refX=&quot;5&quot; refY=&quot;5&quot; orient=&quot;auto&quot;&amp;gt;
-&amp;lt;path d=&quot;M 0 0 L 10 5 L 0 10 Z&quot; fill=&quot;#4caf50&quot;/&amp;gt;
-&amp;lt;/marker&amp;gt;
-&amp;lt;/defs&amp;gt;
-&amp;lt;/svg&amp;gt;&lt;/p&gt;
+&lt;p&gt;五、经典CNN架构深度解析&lt;/p&gt;
+&lt;p&gt;5.1 LeNet-5 (1998) —— 开山鼻祖&lt;/p&gt;
+&lt;p&gt;INPUT → Conv1 → Pool1 → Conv2 → Pool2 → FC1 → FC2 → OUTPUT&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用于手写数字识别（MNIST）&lt;/li&gt;
+&lt;li&gt;首次证明CNN可行性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;5.2 AlexNet (2012) —— 深度学习革命&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;8层（5Conv + 3FC）&lt;/li&gt;
+&lt;li&gt;首次使用ReLU、Dropout&lt;/li&gt;
+&lt;li&gt;数据增强 + GPU训练&lt;/li&gt;
+&lt;li&gt;ImageNet Top-5错误率从26%→15.3%&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;5.3 VGGNet (2014) —— 简洁之美&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;核心：统一使用3×3小卷积核堆叠&lt;/li&gt;
+&lt;li&gt;感受野等价于一个大核，但参数更少&lt;/li&gt;
+&lt;li&gt;VGG16：13Conv + 3FC = 16层&lt;/li&gt;
+&lt;li&gt;至今仍被用作特征提取器（如风格迁移）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;5.4 GoogLeNet / Inception (2014) —— 多尺度融合&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Inception模块：并行使用1×1, 3×3, 5×5卷积 + Pooling → 捕捉多尺度特征&lt;/li&gt;
+&lt;li&gt;1×1卷积：降维/升维，减少计算量（“瓶颈层”）&lt;/li&gt;
+&lt;li&gt;22层，参数比AlexNet少12倍&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;5.5 ResNet (2015) —— 突破深度极限&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;残差块（Residual Block）：
+$$y = F(x) + x$$&lt;/li&gt;
+&lt;li&gt;解决“网络退化”问题（深层网络训练误差反而上升）&lt;/li&gt;
+&lt;li&gt;可训练超1000层网络（ResNet-152常用）&lt;/li&gt;
+&lt;li&gt;核心思想：让网络学习残差（变化量），而非直接映射&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;🏆 ResNet是现代CNN的基石，几乎所有新模型都受其影响。&lt;/p&gt;
+&lt;p&gt;5.6 EfficientNet (2019) —— 平衡的艺术&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;提出复合缩放（Compound Scaling） ：同时缩放网络深度（d）、宽度（w）、分辨率（r）&lt;/li&gt;
+&lt;li&gt;公式：$$d = \alpha^\phi, w = \beta^\phi, r = \gamma^\phi$$，约束 $$ \alpha \cdot \beta^2 \cdot \gamma^2 \approx 2 $$&lt;/li&gt;
+&lt;li&gt;在相同计算量下达到SOTA精度&lt;/li&gt;
+&lt;/ul&gt;
 &lt;hr /&gt;
-&lt;p&gt;&lt;strong&gt;✅ 布局合理：单侧边栏 + 网格模式（舒适）&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;svg width=&quot;800&quot; height=&quot;200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;&amp;gt;
-&amp;lt;!-- 背景 --&amp;gt;
-&amp;lt;rect width=&quot;800&quot; height=&quot;200&quot; fill=&quot;#f8f9fa&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 左侧边栏 --&amp;gt;
-&amp;lt;rect x=&quot;20&quot; y=&quot;30&quot; width=&quot;140&quot; height=&quot;140&quot; fill=&quot;#e3f2fd&quot; stroke=&quot;#2196f3&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;90&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#1976d2&quot;&amp;gt;左侧边栏&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;90&quot; y=&quot;110&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;280px&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 文章1 --&amp;gt;
-&amp;lt;rect x=&quot;180&quot; y=&quot;30&quot; width=&quot;180&quot; height=&quot;140&quot; fill=&quot;#e8f5e9&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;270&quot; y=&quot;85&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#2e7d32&quot;&amp;gt;文章1&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;270&quot; y=&quot;105&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;750px&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;270&quot; y=&quot;125&quot; text-anchor=&quot;middle&quot; font-size=&quot;11&quot; fill=&quot;#388e3c&quot;&amp;gt;宽度充足&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 文章2 --&amp;gt;
-&amp;lt;rect x=&quot;380&quot; y=&quot;30&quot; width=&quot;180&quot; height=&quot;140&quot; fill=&quot;#e8f5e9&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; rx=&quot;4&quot;/&amp;gt;
-&amp;lt;text x=&quot;470&quot; y=&quot;85&quot; text-anchor=&quot;middle&quot; font-size=&quot;14&quot; font-weight=&quot;bold&quot; fill=&quot;#2e7d32&quot;&amp;gt;文章2&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;470&quot; y=&quot;105&quot; text-anchor=&quot;middle&quot; font-size=&quot;12&quot; fill=&quot;#666&quot;&amp;gt;750px&amp;lt;/text&amp;gt;
-&amp;lt;text x=&quot;470&quot; y=&quot;125&quot; text-anchor=&quot;middle&quot; font-size=&quot;11&quot; fill=&quot;#388e3c&quot;&amp;gt;宽度充足&amp;lt;/text&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;!-- 箭头指示 --&amp;gt;
-&amp;lt;path d=&quot;M 270 180 L 270 195&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; marker-end=&quot;url(#arrowgreen2)&quot;/&amp;gt;
-&amp;lt;path d=&quot;M 470 180 L 470 195&quot; stroke=&quot;#4caf50&quot; stroke-width=&quot;2&quot; marker-end=&quot;url(#arrowgreen2)&quot;/&amp;gt;&lt;/p&gt;
-&lt;p&gt;&amp;lt;defs&amp;gt;
-&amp;lt;marker id=&quot;arrowgreen2&quot; markerWidth=&quot;10&quot; markerHeight=&quot;10&quot; refX=&quot;5&quot; refY=&quot;5&quot; orient=&quot;auto&quot;&amp;gt;
-&amp;lt;path d=&quot;M 0 0 L 10 5 L 0 10 Z&quot; fill=&quot;#4caf50&quot;/&amp;gt;
-&amp;lt;/marker&amp;gt;
-&amp;lt;/defs&amp;gt;
-&amp;lt;/svg&amp;gt;&lt;/p&gt;
-&lt;h3&gt;3.2 技术实现层面&lt;/h3&gt;
-&lt;p&gt;从代码实现角度，Firefly 采用了以下策略：&lt;/p&gt;
-&lt;h4&gt;自动冲突检测&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// src/utils/layout-utils.ts (示例)
-
-// 检测布局冲突
-function canUseGridLayout(): boolean {
-  const { position } = sidebarLayoutConfig;
-  
-  // 如果启用了双侧边栏，禁用网格模式
-  if (position === &quot;both&quot;) {
-    return false;
-  }
-  
-  return true;
-}
-
-// 自动修正布局
-function getActualLayoutMode(): &quot;list&quot; | &quot;grid&quot; {
-  const { defaultMode } = siteConfig.postListLayout;
-  
-  if (defaultMode === &quot;grid&quot; &amp;amp;&amp;amp; !canUseGridLayout()) {
-    console.warn(&quot;网格模式与双侧边栏冲突，已自动切换为列表模式&quot;);
-    return &quot;list&quot;;
-  }
-  
-  return defaultMode;
-}
+&lt;p&gt;六、CNN 在各领域的应用详解（附模型）&lt;/p&gt;
+&lt;p&gt;6.1 图像分类 → ResNet, EfficientNet, Vision Transformer&lt;/p&gt;
+&lt;p&gt;6.2 目标检测&lt;/p&gt;
+&lt;p&gt;两阶段检测器（精度高）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Faster R-CNN：RPN生成候选框 + CNN分类&lt;/li&gt;
+&lt;li&gt;Mask R-CNN：Faster R-CNN + 分割分支&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;单阶段检测器（速度快）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;YOLO系列（You Only Look Once）：将检测视为回归问题&lt;/li&gt;
+&lt;li&gt;SSD（Single Shot MultiBox Detector）：多尺度特征图预测&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6.3 语义分割&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;FCN（全卷积网络）：将FC层替换为卷积，输出像素级预测&lt;/li&gt;
+&lt;li&gt;U-Net：编码器-解码器结构 + 跳跃连接（医学图像标配）&lt;/li&gt;
+&lt;li&gt;DeepLab系列：空洞卷积 + ASPP（多尺度上下文）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6.4 姿态估计&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;OpenPose：多阶段CNN，同时预测关键点和连接&lt;/li&gt;
+&lt;li&gt;HRNet：保持高分辨率特征，精度更高&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6.5 医学影像&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;nnU-Net：自动适配任何医学分割任务的框架&lt;/li&gt;
+&lt;li&gt;CheXNet：121层DenseNet，用于胸部X光肺炎检测&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6.6 视频理解&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;3D CNN（如C3D）：卷积核扩展到时间维&lt;/li&gt;
+&lt;li&gt;Two-Stream Network：RGB流 + 光流流&lt;/li&gt;
+&lt;li&gt;I3D（Inflated 3D ConvNet）：将2D卷积核“膨胀”为3D&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;七、CNN 的前沿发展与未来&lt;/p&gt;
+&lt;p&gt;7.1 CNN vs Transformer&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Vision Transformer (ViT)：将图像分块，用Transformer编码 → 在大数据下超越CNN&lt;/li&gt;
+&lt;li&gt;混合模型：CNN提取局部特征 + Transformer建模长程依赖（如Swin Transformer）&lt;/li&gt;
+&lt;li&gt;趋势：CNN不会消失，但与Attention机制深度融合&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;7.2 轻量化CNN&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MobileNet系列：深度可分离卷积&lt;/li&gt;
+&lt;li&gt;ShuffleNet：通道混洗减少计算&lt;/li&gt;
+&lt;li&gt;GhostNet：用廉价操作生成“幻影”特征图&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;7.3 自监督学习&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;MoCo, SimCLR：无标签数据预训练CNN，再微调&lt;/li&gt;
+&lt;li&gt;减少对标注数据的依赖&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;7.4 可解释性与可视化&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CAM / Grad-CAM：可视化CNN关注区域&lt;/li&gt;
+&lt;li&gt;特征反演：从特征图重建输入图像&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;八、学习路径与资源推荐&lt;/p&gt;
+&lt;p&gt;8.1 学习路线图&lt;/p&gt;
+&lt;p&gt;数学基础 → Python/PyTorch → CNN理论 → 经典论文 → 复现项目 → 参加比赛（Kaggle）→ 研究前沿&lt;/p&gt;
+&lt;p&gt;8.2 书籍推荐&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;《深度学习》（花书）Ian Goodfellow — 理论基石&lt;/li&gt;
+&lt;li&gt;《动手学深度学习》（李沐）— 代码实践神器（有PyTorch版）&lt;/li&gt;
+&lt;li&gt;《神经网络与深度学习》（邱锡鹏）— 中文精品&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;8.3 视频课程&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;吴恩达《Deep Learning Specialization》（Coursera）&lt;/li&gt;
+&lt;li&gt;李沐《动手学深度学习》B站课程&lt;/li&gt;
+&lt;li&gt;斯坦福CS231n（YouTube）— CNN圣经级课程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;8.4 实战平台&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kaggle：大量图像比赛（入门推荐：Digit Recognizer, Dogs vs Cats）&lt;/li&gt;
+&lt;li&gt;Google Colab：免费GPU，开箱即用&lt;/li&gt;
+&lt;li&gt;Hugging Face：预训练模型库（含CNN）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr /&gt;
+&lt;p&gt;九、一个完整CNN项目实战框架（PyTorch）&lt;/p&gt;
+&lt;p&gt;import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms&lt;/p&gt;
+&lt;h3&gt;1. 数据加载与增强&lt;/h3&gt;
+&lt;p&gt;transform = transforms.Compose([
+transforms.Resize((32, 32)),
+transforms.ToTensor(),
+transforms.Normalize((0.5,), (0.5,))
+])&lt;/p&gt;
+&lt;p&gt;trainset = datasets.CIFAR10(root=&apos;./data&apos;, train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)&lt;/p&gt;
+&lt;h3&gt;2. 定义带BN和Dropout的CNN&lt;/h3&gt;
+&lt;p&gt;class CNN(nn.Module):
+def &lt;strong&gt;init&lt;/strong&gt;(self):
+super(CNN, self).&lt;strong&gt;init&lt;/strong&gt;()
+self.features = nn.Sequential(
+nn.Conv2d(3, 32, 3, padding=1), nn.BatchNorm2d(32), nn.ReLU(),
+nn.MaxPool2d(2),
+nn.Conv2d(32, 64, 3, padding=1), nn.BatchNorm2d(64), nn.ReLU(),
+nn.MaxPool2d(2),
+nn.Conv2d(64, 128, 3, padding=1), nn.BatchNorm2d(128), nn.ReLU(),
+nn.AdaptiveAvgPool2d((1, 1))  # GAP
+)
+self.classifier = nn.Sequential(
+nn.Dropout(0.5),
+nn.Linear(128, 10)
+)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def forward(self, x):
+    x = self.features(x)
+    x = torch.flatten(x, 1)
+    x = self.classifier(x)
+    return x
 &lt;/code&gt;&lt;/pre&gt;
-&lt;h4&gt;布局切换按钮行为&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// 双侧边栏时，隐藏布局切换按钮
-const showLayoutSwitch = 
-  siteConfig.postListLayout.allowSwitch &amp;amp;&amp;amp; 
-  sidebarLayoutConfig.position !== &quot;both&quot;;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;3.3 设计建议&lt;/h3&gt;
-&lt;p&gt;根据以上分析，我们给出以下布局组合建议：&lt;/p&gt;
-&lt;h4&gt;✅ 推荐组合&lt;/h4&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;侧边栏模式&lt;/th&gt;
-&lt;th&gt;文章列表模式&lt;/th&gt;
-&lt;th&gt;推荐度&lt;/th&gt;
-&lt;th&gt;适用场景&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;左侧边栏&lt;/td&gt;
-&lt;td&gt;列表模式&lt;/td&gt;
-&lt;td&gt;⭐⭐⭐⭐⭐&lt;/td&gt;
-&lt;td&gt;传统博客风格，视觉效果好&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;左侧边栏&lt;/td&gt;
-&lt;td&gt;网格模式&lt;/td&gt;
-&lt;td&gt;⭐⭐⭐⭐⭐&lt;/td&gt;
-&lt;td&gt;快速浏览，信息密集&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;双侧边栏&lt;/td&gt;
-&lt;td&gt;列表模式&lt;/td&gt;
-&lt;td&gt;⭐⭐⭐⭐&lt;/td&gt;
-&lt;td&gt;宽屏显示，信息丰富&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h4&gt;❌ 不推荐/不支持组合&lt;/h4&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;侧边栏模式&lt;/th&gt;
-&lt;th&gt;文章列表模式&lt;/th&gt;
-&lt;th&gt;推荐度&lt;/th&gt;
-&lt;th&gt;原因&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;双侧边栏&lt;/td&gt;
-&lt;td&gt;网格模式&lt;/td&gt;
-&lt;td&gt;❌ 禁止&lt;/td&gt;
-&lt;td&gt;主内容区域过窄，体验差&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
+&lt;h3&gt;3. 训练循环&lt;/h3&gt;
+&lt;p&gt;model = CNN().cuda()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)&lt;/p&gt;
+&lt;p&gt;for epoch in range(10):
+for inputs, labels in trainloader:
+inputs, labels = inputs.cuda(), labels.cuda()
+optimizer.zero_grad()
+outputs = model(inputs)
+loss = criterion(outputs, labels)
+loss.backward()
+optimizer.step()
+print(f&apos;Epoch {epoch+1}, Loss: {loss.item():.4f}&apos;)&lt;/p&gt;
 &lt;hr /&gt;
-&lt;h2&gt;四、响应式布局行为&lt;/h2&gt;
-&lt;p&gt;Firefly 的布局系统具有智能的响应式设计，会根据屏幕尺寸自动调整。&lt;/p&gt;
-&lt;h3&gt;4.1 断点定义&lt;/h3&gt;
-&lt;p&gt;Firefly 使用 Tailwind CSS 标准断点：&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;断点名称&lt;/th&gt;
-&lt;th&gt;屏幕宽度&lt;/th&gt;
-&lt;th&gt;设备类型&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;Mobile&lt;/td&gt;
-&lt;td&gt;&amp;lt; 768px&lt;/td&gt;
-&lt;td&gt;手机&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Tablet&lt;/td&gt;
-&lt;td&gt;768px - 1023px&lt;/td&gt;
-&lt;td&gt;平板&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Desktop&lt;/td&gt;
-&lt;td&gt;≥ 1024px&lt;/td&gt;
-&lt;td&gt;桌面&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;Wide Desktop&lt;/td&gt;
-&lt;td&gt;≥ 1200px&lt;/td&gt;
-&lt;td&gt;宽屏桌面&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;4.2 侧边栏响应式规则&lt;/h3&gt;
-&lt;h4&gt;单侧边栏模式&lt;/h4&gt;
+&lt;p&gt;十、总结：CNN 的核心价值&lt;/p&gt;
+&lt;p&gt;🧠 CNN 的本质是“空间特征的层次化自动提取器” 。&lt;/p&gt;
+&lt;p&gt;它通过：&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Desktop (≥1024px)&lt;/strong&gt;：显示侧边栏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Tablet (768px-1023px)&lt;/strong&gt;：显示侧边栏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Mobile (&amp;lt;768px)&lt;/strong&gt;：显示侧边栏（可配置隐藏）&lt;/li&gt;
+&lt;li&gt;局部连接 → 捕捉空间相关性&lt;/li&gt;
+&lt;li&gt;权值共享 → 极大减少参数&lt;/li&gt;
+&lt;li&gt;池化操作 → 提供不变性与降维&lt;/li&gt;
+&lt;li&gt;深度堆叠 → 实现从像素到语义的抽象&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4&gt;双侧边栏模式&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Desktop (≥1024px)&lt;/strong&gt;：显示左右双侧边栏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Tablet (768px-1023px)&lt;/strong&gt;：只显示左侧边栏&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Mobile (&amp;lt;768px)&lt;/strong&gt;：只显示左侧边栏&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;4.3 文章列表响应式规则&lt;/h3&gt;
-&lt;h4&gt;列表模式&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;所有屏幕尺寸&lt;/strong&gt;：始终单列显示&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Mobile&lt;/strong&gt;：缩小间距和卡片内边距&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;网格模式&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Wide Desktop (≥1200px)&lt;/strong&gt;：双列网格&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Tablet &amp;amp; Mobile (&amp;lt;1200px)&lt;/strong&gt;：自动切换为单列列表&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;布局切换按钮&lt;/strong&gt;：仅在 ≥1200px 时显示&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;h2&gt;五、布局选择指南&lt;/h2&gt;
-&lt;h3&gt;5.1 基于内容类型选择&lt;/h3&gt;
-&lt;h4&gt;摄影/设计博客&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// 推荐：左侧边栏 + 列表模式
-position: &quot;left&quot;
-defaultMode: &quot;list&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;原因&lt;/strong&gt;：列表模式可以展示精美的封面图，突出视觉效果。&lt;/p&gt;
-&lt;h4&gt;技术博客&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// 方案1：左侧边栏 + 网格模式
-position: &quot;left&quot;
-defaultMode: &quot;grid&quot;
-
-// 方案2：双侧边栏 + 列表模式
-position: &quot;both&quot;
-defaultMode: &quot;list&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;原因&lt;/strong&gt;：技术博客文章多，网格模式便于快速查找；或使用双侧边栏展示更多分类和标签。&lt;/p&gt;
-&lt;h4&gt;个人日记&lt;/h4&gt;
-&lt;pre&gt;&lt;code&gt;// 推荐：左侧边栏 + 列表模式
-position: &quot;left&quot;
-defaultMode: &quot;list&quot;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;原因&lt;/strong&gt;：突出内容，营造亲切感。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;七、常见问题&lt;/h2&gt;
-&lt;h3&gt;Q1: 为什么我配置了网格模式，但页面还是显示列表？&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: 检查以下几点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;侧边栏是否配置为双侧边栏（&lt;code&gt;position: &quot;both&quot;&lt;/code&gt;）？&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;如果是，网格模式会被自动禁用&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;屏幕宽度是否小于 1200px？&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;网格模式仅在宽屏桌面端生效&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;浏览器是否缓存了旧的设置？&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;清除 localStorage 中的布局偏好&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Q2: 双侧边栏在我的笔记本上显示不正常怎么办？&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: 双侧边栏需要较大的屏幕宽度（建议 ≥1400px）。解决方案：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;使用外接显示器&lt;/li&gt;
-&lt;li&gt;切换为单侧边栏模式&lt;/li&gt;
-&lt;li&gt;配置响应式布局，让平板端自动隐藏右侧边栏&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Q3: 可以让移动端也显示网格模式吗？&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: 不建议。移动端屏幕太窄，双列网格会导致文章卡片过窄，严重影响阅读体验。Firefly 已自动在小屏幕上切换为列表模式。&lt;/p&gt;
-&lt;h3&gt;Q4: 布局切换按钮在哪里？&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: 布局切换按钮位于导航栏右侧，但需要满足以下条件：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;siteConfig.postListLayout.allowSwitch&lt;/code&gt; 为 &lt;code&gt;true&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;侧边栏不是双侧边栏模式&lt;/li&gt;
-&lt;li&gt;屏幕宽度 ≥ 1200px&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Q5: 可以禁用侧边栏只显示主内容吗？&lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;A&lt;/strong&gt;: 可以，设置 &lt;code&gt;sidebarLayoutConfig.enable = false&lt;/code&gt; 即可。但不建议这样做，因为会失去导航和辅助信息。&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;八、总结&lt;/h2&gt;
-&lt;p&gt;Firefly 的布局系统设计遵循以下原则：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;内容为王&lt;/strong&gt;：确保主内容区域有足够的空间&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;响应式优先&lt;/strong&gt;：自动适配不同设备&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;用户友好&lt;/strong&gt;：提供灵活的配置选项&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;性能考虑&lt;/strong&gt;：避免过度复杂的布局组合&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;strong&gt;核心要点&lt;/strong&gt;：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;✅ 单侧边栏 + 列表模式：最通用，适合大多数场景&lt;/li&gt;
-&lt;li&gt;✅ 单侧边栏 + 网格模式：适合内容密集型博客&lt;/li&gt;
-&lt;li&gt;✅ 双侧边栏 + 列表模式：适合宽屏显示，信息丰富&lt;/li&gt;
-&lt;li&gt;❌ 双侧边栏 + 网格模式：&lt;strong&gt;不支持&lt;/strong&gt;，会导致布局拥挤&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;布局冲突的本质&lt;/strong&gt;：&lt;/p&gt;
-&lt;p&gt;双侧边栏已经占据了大量横向空间（560px），再将主内容区域分成双列，会导致每列宽度不足（590px），严重影响阅读体验。这是一个设计上的合理限制，而非技术缺陷。&lt;/p&gt;
-&lt;p&gt;选择适合您的布局组合，让您的博客既美观又实用！&lt;/p&gt;
-&lt;hr /&gt;
-&lt;h2&gt;相关链接&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;📚 &lt;a href=&quot;https://docs-firefly.cuteleaf.cn/config/sidebarConfig-usage/&quot;&gt;侧边栏配置文档&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;📚 &lt;a href=&quot;https://docs-firefly.cuteleaf.cn/config/siteConfig-usage/&quot;&gt;站点配置文档&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;🏠 &lt;a href=&quot;https://docs-firefly.cuteleaf.cn/&quot;&gt;Firefly 官方文档&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;⭐ &lt;a href=&quot;https://github.com/CuteLeaf/Firefly&quot;&gt;Firefly GitHub&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;彻底改变了计算机视觉，并辐射到NLP、语音、生物、物理等众多领域。&lt;/p&gt;
 </content:encoded></item><item><title>Firefly 代码块示例</title><link>https://hyperthreading.cn/posts/code-examples/</link><guid isPermaLink="true">https://hyperthreading.cn/posts/code-examples/</guid><description>在Firefly中使用表达性代码的代码块在 Markdown 中的外观。</description><pubDate>Fri, 02 Jan 1970 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;在这里，我们将探索如何使用 &lt;a href=&quot;https://expressive-code.com/&quot;&gt;Expressive Code&lt;/a&gt; 展示代码块。提供的示例基于官方文档，您可以参考以获取更多详细信息。&lt;/p&gt;
 &lt;h2&gt;表达性代码&lt;/h2&gt;
 &lt;h3&gt;语法高亮&lt;/h3&gt;
