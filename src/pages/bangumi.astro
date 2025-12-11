@@ -12,8 +12,8 @@ import type {
 	UserSubjectCollectionResponse,
 } from "@/types/bangumi";
 import type {
-	BiliSeasonItem,
 	BilibiliFollowListResponse,
+	BiliSeasonItem,
 } from "@/types/bilibili";
 
 //参考：霞葉 https://kasuha.com/posts/fuwari-enhance-ep2/
@@ -154,9 +154,11 @@ async function fetchBilibiliData(mid: string, type: number) {
 		let hasMore = true;
 		const isDev = import.meta.env.DEV;
 		const maxPages = isDev ? 1 : 0; // 开发模式仅拉取一页
-		const envCookie = (import.meta.env as any)?.BILI_COOKIE as
-			| string
-			| undefined;
+		const envRecord = import.meta.env as unknown as Record<
+			string,
+			string | undefined
+		>;
+		const envCookie = envRecord?.BILI_COOKIE;
 
 		console.log(
 			`[Bilibili] ${isDev ? "🔧 开发模式" : "🌐 生产模式"} - 开始获取用户 ${mid} 的 type ${type} 数据...`,
@@ -209,15 +211,15 @@ async function fetchBilibiliData(mid: string, type: number) {
 
 			const raw = (await response.json()) as BilibiliFollowListResponse;
 			console.log(
-				`[Bilibili] 响应代码: ${String((raw as any)?.code)}, 信息: ${String((raw as any)?.message)}`,
+				`[Bilibili] 响应代码: ${String(raw.code)}, 信息: ${String(raw.message)}`,
 			);
 			console.log(
-				`[Bilibili] 响应data键: ${Object.keys((raw as any)?.data || {}).join(",")}`,
+				`[Bilibili] 响应data键: ${Object.keys(raw.data ?? {}).join(",")}`,
 			);
 			const currentBatch =
-				(raw?.data as any)?.list ||
-				(raw?.data as any)?.result ||
-				(raw as any)?.result ||
+				raw?.data?.list ||
+				(raw?.data as { result?: BiliSeasonItem[] } | undefined)?.result ||
+				(raw as { result?: BiliSeasonItem[] } | undefined)?.result ||
 				[];
 			console.log(
 				`[Bilibili] 本页返回条目: ${Array.isArray(currentBatch) ? currentBatch.length : 0}`,
@@ -231,27 +233,34 @@ async function fetchBilibiliData(mid: string, type: number) {
 				try {
 					const fallbackUrl = `https://space.bilibili.com/ajax/Bangumi/getList?mid=${mid}`;
 					console.log(`[Bilibili] 尝试回退接口: ${fallbackUrl}`);
-					const fbResp = await fetch(fallbackUrl, {
-						headers,
-					});
+					const fbResp = await fetch(fallbackUrl, { headers });
 					if (fbResp.ok) {
-						const fbJson = (await fbResp.json()) as any;
-						const fbList =
-							(fbJson?.data && fbJson?.data?.result) || fbJson?.result || [];
+						const fbJson = (await fbResp.json()) as {
+							data?: { result?: unknown[] };
+							result?: unknown[];
+						};
+						const fbList = fbJson?.data?.result ?? fbJson?.result ?? [];
 						if (Array.isArray(fbList) && fbList.length > 0) {
-							const mapped: BiliSeasonItem[] = fbList.map((it: any) => ({
-								season_id: Number(it?.season_id ?? it?.seasonId ?? 0),
-								title: String(it?.title ?? ""),
-								cover: String(it?.cover ?? it?.square_cover ?? ""),
-								total_count: Number(it?.total_count ?? it?.total ?? 0),
-								is_finish: Number(it?.is_finish ?? it?.is_finish ?? 0),
-								season_type_name: String(
-									it?.season_type_name ?? it?.type_name ?? "",
-								),
-								stat: {
-									follow: Number(it?.stat?.follow ?? it?.favorites ?? 0),
-								},
-							}));
+							const mapped: BiliSeasonItem[] = (
+								fbList as Array<Record<string, unknown>>
+							).map((it) => {
+								const getNum = (v: unknown) =>
+									typeof v === "number" ? v : Number(v ?? 0);
+								const getStr = (v: unknown) =>
+									typeof v === "string" ? v : String(v ?? "");
+								const stat = it["stat"] as Record<string, unknown> | undefined;
+								return {
+									season_id: getNum(it["season_id"] ?? it["seasonId"]),
+									title: getStr(it["title"]),
+									cover: getStr(it["cover"] ?? it["square_cover"]),
+									total_count: getNum(it["total_count"] ?? it["total"]),
+									is_finish: getNum(it["is_finish"]),
+									season_type_name: getStr(
+										it["season_type_name"] ?? it["type_name"],
+									),
+									stat: { follow: getNum(stat?.["follow"] ?? it["favorites"]) },
+								};
+							});
 							console.log(`[Bilibili] 回退接口获取到 ${mapped.length} 条数据`);
 							allData = allData.concat(mapped);
 							hasMore = false;
