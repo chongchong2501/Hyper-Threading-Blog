@@ -9,8 +9,7 @@ export const siteConfig: SiteConfig = {
 	title: "Hyper Threading",
 	subtitle: "Blog",
 	site_url: "https://bento.me/chongchong",
-	description:
-		"超线程的个人博客网站",
+	description: "超线程的个人博客网站",
 	keywords: [
 		"Firefly",
 		"Fuwari",

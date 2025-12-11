@@ -1,7 +1,7 @@
 ---
 title: 卷积神经网络（CNN）
 published: 2025-12-01
-tags: [神经网络, cnn, 学习笔记，深度学习]
+tags: [神经网络, cnn, 学习笔记,深度学习]
 category: 学习笔记
 draft: false
 ---

@@ -40,7 +40,13 @@ export const commentConfig: CommentConfig = {
 		reactionsEnabled: "1", // 设置 Giscus 评论系统反应功能
 		emitMetadata: "1", // 设置 Giscus 评论系统元数据
 		inputPosition: "top", // 设置 Giscus 评论系统输入位置
-		theme: "preferred_color_scheme", // 设置 Giscus 评论系统主题
+		/* Giscus 可用主题列表：
+		"preferred_color_scheme",
+		"light", "light_high_contrast", "light_protanopia", "light_tritanopia",
+		"dark", "dark_dimmed", "transparent_dark", "dark_high_contrast", "dark_protanopia", "dark_tritanopia",
+		"sepia", "custom"
+		*/
+		theme: "dark_protanopia", // 设置 Giscus 评论系统主题
 		lang: "zh-CN", // 设置 Giscus 评论系统语言
 		loading: "lazy", // 设置 Giscus 评论系统加载方式
 	},

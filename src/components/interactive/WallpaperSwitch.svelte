@@ -26,7 +26,11 @@ function switchWallpaperMode(newMode: WALLPAPER_MODE) {
 	setWallpaperMode(newMode);
 }
 function cycleWallpaperMode() {
-	const order: WALLPAPER_MODE[] = [WALLPAPER_BANNER, WALLPAPER_OVERLAY, WALLPAPER_NONE];
+	const order: WALLPAPER_MODE[] = [
+		WALLPAPER_BANNER,
+		WALLPAPER_OVERLAY,
+		WALLPAPER_NONE,
+	];
 	const idx = order.indexOf(mode);
 	const next = order[(idx + 1) % order.length];
 	switchWallpaperMode(next as WALLPAPER_MODE);

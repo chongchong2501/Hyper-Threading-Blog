@@ -40,11 +40,9 @@ export const profileConfig: ProfileConfig = {
 			showName: false,
 		},
 		{
-
-      		name: "Website",
-      		icon: "fa6-solid:globe",
-      		url: "https://bento.me/chongchong",
-
-    	},
+			name: "Website",
+			icon: "fa6-solid:globe",
+			url: "https://bento.me/chongchong",
+		},
 	],
 };
